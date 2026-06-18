@@ -1089,11 +1089,11 @@ main > .ventilasjon-hero {
 }
 .footer-back-top:hover { color: var(--c-primary); }
 .footer-dev-credit {
-  font-size: .65rem; color: rgba(255,255,255,.2);
+  font-size: .65rem; color: rgba(255,255,255,.45);
   text-decoration: none; letter-spacing: .04em;
   transition: color .2s;
 }
-.footer-dev-credit:hover { color: rgba(255,255,255,.5); }
+.footer-dev-credit:hover { color: #fff; }
 .footer-logo-link { display: inline-block; }
 .footer-logo-img { width: 130px; height: auto; display: block; }
 
