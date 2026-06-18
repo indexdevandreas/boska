@@ -1088,6 +1088,12 @@ main > .ventilasjon-hero {
   transition: color .25s;
 }
 .footer-back-top:hover { color: var(--c-primary); }
+.footer-dev-credit {
+  font-size: .65rem; color: rgba(255,255,255,.2);
+  text-decoration: none; letter-spacing: .04em;
+  transition: color .2s;
+}
+.footer-dev-credit:hover { color: rgba(255,255,255,.5); }
 .footer-logo-link { display: inline-block; }
 .footer-logo-img { width: 130px; height: auto; display: block; }
 
@@ -2104,11 +2110,15 @@ a.hc-item-val:hover { color: var(--c-primary); }
   .floating-call { display: flex; }
 
   /* DISABLE STICKY HERO + OVERLAY-SCROLL EFFECT ON MOBILE */
-  .hero { position: relative; top: auto; z-index: auto; opacity: 1 !important; min-height: auto; }
+  .hero { position: relative; top: auto; z-index: auto; opacity: 1 !important; min-height: 115svh; }
   main > *:not(.hero) { z-index: auto; }
 
   /* INDEX HERO */
-  .hero-bg img { object-position: right 15%; }
+  .hero-bg img {
+    object-position: 90% 15%;
+    transform: scale(1.45);
+    transform-origin: right 15%;
+  }
   .hero-left { padding: 2.5rem 1.25rem 2.5rem 1.25rem; justify-content: flex-start; }
   .hero-title { font-size: clamp(2.75rem, 11vw, 4rem); }
   .hero-tagline { font-size: .85rem; }
