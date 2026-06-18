@@ -2110,14 +2110,23 @@ a.hc-item-val:hover { color: var(--c-primary); }
   .floating-call { display: flex; }
 
   /* DISABLE STICKY HERO + OVERLAY-SCROLL EFFECT ON MOBILE */
-  .hero { position: relative; top: auto; z-index: auto; opacity: 1 !important; min-height: 115svh; }
+  .hero { position: relative; top: auto; z-index: auto; opacity: 1 !important; min-height: 108svh; }
   main > *:not(.hero) { z-index: auto; }
 
-  /* INDEX HERO */
+  /* INDEX HERO — bilete heilt til høgre, sterk gradient over tekstsida */
   .hero-bg img {
-    object-position: 90% 15%;
-    transform: scale(1.45);
+    object-position: right 15%;
+    transform: scale(1.6);
     transform-origin: right 15%;
+  }
+  .hero::before {
+    background: linear-gradient(
+      to right,
+      rgba(0,0,0,0.88) 0%,
+      rgba(0,0,0,0.82) 45%,
+      rgba(0,0,0,0.45) 70%,
+      rgba(0,0,0,0.10) 100%
+    );
   }
   .hero-left { padding: 2.5rem 1.25rem 2.5rem 1.25rem; justify-content: flex-start; }
   .hero-title { font-size: clamp(2.75rem, 11vw, 4rem); }
