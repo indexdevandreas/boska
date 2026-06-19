@@ -36,9 +36,9 @@ setTimeout(() => {
 // === STICKY HERO FADE (desktop only) ===
 (() => {
   const hero = document.querySelector('.hero');
-  if (!hero || window.innerWidth <= 768) return;
+  if (!hero || window.innerWidth < 1024) return;
   window.addEventListener('scroll', () => {
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth < 1024) return;
     const h = hero.offsetHeight;
     const progress = Math.min(Math.max(window.scrollY / (h * 0.65), 0), 1);
     hero.style.opacity = 1 - progress * 0.55;
