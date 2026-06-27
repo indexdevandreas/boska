@@ -153,7 +153,7 @@ sections.forEach(id => {
 
 // === CONTACT FORMS (Web3Forms) ===
 // Gå til web3forms.com, skriv inn tommy@boskaror.no og lim inn nøkkelen her:
-const W3F_KEY = 'DIN_WEB3FORMS_NØKKEL';
+const W3F_KEY = '81f9b353-00c0-407b-8bd6-ff39ca14903a';
 
 function handleForm(formId, successSel) {
   const form = document.getElementById(formId);
