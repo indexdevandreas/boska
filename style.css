@@ -903,6 +903,12 @@ main > .ventilasjon-hero {
   background: #fff; padding: 4rem 0;
 }
 .testimonial-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+/* Luft og ein kort skiljestrek mellom fleire omtalar */
+.testimonial-inner + .testimonial-inner { margin-top: 3.5rem; padding-top: 3.5rem; position: relative; }
+.testimonial-inner + .testimonial-inner::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 48px; height: 1px; background: var(--c-line);
+}
 
 .testimonial-mark {
   font-family: var(--font-display);
@@ -2404,6 +2410,7 @@ a.hc-item-val:hover { color: var(--c-primary); }
   .team-section, .content-section { padding: 3.5rem 0; }
   .homepage-contact { padding: 3rem 0 4rem; }
   .testimonial-section { padding: 2.5rem 0; }
+  .testimonial-inner + .testimonial-inner { margin-top: 2.5rem; padding-top: 2.5rem; }
   .split-stats-section { padding: 3rem 0 0; }
 
   /* Footer bottom mobile */
