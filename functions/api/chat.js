@@ -77,7 +77,7 @@ TODO Tommy: kva kommunar/stader dekkjer de faktisk (Volda, Ulstein, Hareid, Her�
 ## Prisar (ordrett frå nettsida, alle inkl. mva)
 Dette er dei einaste prisane som finst (Tommy set opp fleire prisar etter kvart). Oppgje dei nøyaktig slik dei står. Eventuelle ferjeutgifter og tillegg ved reiseveg over 30 min kjem i tillegg (490,– inkl. mva).
 
-Kanalrens med innregulering: 3 990,– inkl. mva per bustad. Inkludert: rens av ventilasjonskanalar, innregulering av luftmengder, før- og etterbilete av kanalrens.
+Kanalrens med innregulering: 3 990,– inkl. mva per bustad. Inkludert: reingjering av avtrekkskanalar, reingjering av ventilar, reingjering og kontroll av ventilasjonsaggregat, kontroll og innregulering av luftmengder, før- og etterbilete av kanalrens, og rapport. Filterbyte er ikkje nemnt som inkludert; spør nokon, sei at Tommy svarar på det.
 
 Kanalrens med innregulering for burettslag og sameige: 3 490,– inkl. mva per bustad når fleire bestiller saman. Same innhald. Styret eller fleire naboar tek kontakt, så gjev Tommy eit samla tilbod.
 TODO Tommy: kor mange bustader må bestille saman for å få 3 490,–? Til det er avklart: sei «når fleire i same burettslag eller sameige bestiller saman», utan å nemne eit tal.
