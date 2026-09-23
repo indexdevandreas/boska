@@ -18,6 +18,10 @@
   const PHONE_DISPLAY = '+47 941 68 653';
   const PHONE_TEL = '+4794168653';
   const EMAIL = 'tommy@boskaror.no';
+  /* Web3Forms: same offentlege nøkkel som kontaktskjemaet i main.js.
+     E-posten går til adressa som er registrert på nøkkelen (Tommy). */
+  const W3F_KEY = '81f9b353-00c0-407b-8bd6-ff39ca14903a';
+  const W3F_URL = 'https://api.web3forms.com/submit';
 
   const WELCOME =
     'Hei! Spør meg om prisar, tenester, område eller befaring, ' +
@@ -192,43 +196,35 @@
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
 
+    const onText = (t) => {
+      answer += t;
+      if (!answerBubble) {
+        typing.remove();
+        answerBubble = addBubble(ui.messagesEl, '', 'bot');
+      }
+      answerBubble.innerHTML = formatMessage(answer);
+      ui.messagesEl.scrollTop = ui.messagesEl.scrollHeight;
+    };
+
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
-        signal: ctrl.signal,
-      });
-      if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+      const lead = await streamChat({ messages: history }, ctrl.signal, onText);
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split('\n');
-        buffer = lines.pop(); /* siste linje kan vere ufullstendig */
-
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          let ev;
-          try { ev = JSON.parse(line.slice(6)); } catch { continue; }
-
-          if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') {
-            answer += ev.delta.text;
-            if (!answerBubble) {
-              typing.remove();
-              answerBubble = addBubble(ui.messagesEl, '', 'bot');
-            }
-            answerBubble.innerHTML = formatMessage(answer);
-            ui.messagesEl.scrollTop = ui.messagesEl.scrollHeight;
-          } else if (ev.type === 'error') {
-            throw new Error(ev.error && ev.error.message);
-          }
+      /* Modellen vil sende beskjed til Tommy. E-posten går frå
+         nettlesaren (Web3Forms tek berre imot kall frå klientsida),
+         og så hentar vi stadfestinga frå modellen. */
+      if (lead) {
+        const ok = await sendLead(lead.lead);
+        if (answer && !/\s$/.test(answer)) onText(' ');
+        try {
+          await streamChat(
+            { messages: history, continuation: { text: lead.text, tool_use: lead.tool_use, ok } },
+            ctrl.signal,
+            onText
+          );
+        } catch {
+          onText(ok
+            ? 'Beskjeden er sendt til Tommy. Han tek kontakt så snart han kan.'
+            : 'Det gjekk dessverre ikkje å sende beskjeden no. Ring oss på ' + PHONE_DISPLAY + ' eller send e-post til ' + EMAIL + '.');
         }
       }
 
@@ -250,6 +246,68 @@
       ui.input.disabled = false;
       ui.sendBtn.disabled = false;
       if (isDesktop()) ui.input.focus();
+    }
+  }
+
+  /* POST til /api/chat og les SSE-straumen. Tekst går til onText etter
+     kvart som han kjem. Returnerer br_lead-hendinga om tenaren sende ei,
+     elles null. */
+  async function streamChat(payload, signal, onText) {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal,
+    });
+    if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let lead = null;
+
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); /* siste linje kan vere ufullstendig */
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+
+        if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') {
+          onText(ev.delta.text);
+        } else if (ev.type === 'br_lead' && ev.lead && ev.tool_use) {
+          lead = ev;
+        } else if (ev.type === 'error') {
+          throw new Error(ev.error && ev.error.message);
+        }
+      }
+    }
+    return lead;
+  }
+
+  /* Send beskjeden til Tommy via Web3Forms, same teneste og nøkkel som
+     kontaktskjemaet i main.js. Returnerer true når e-posten er sendt. */
+  async function sendLead(lead) {
+    const data = new FormData();
+    data.append('access_key', W3F_KEY);
+    data.append('subject', 'Kunde vil bli ringt opp – frå chatboten på boskaror.no');
+    data.append('from_name', 'Chatboten på boskaror.no');
+    data.append('Namn', lead.namn);
+    data.append('Telefon', lead.telefon);
+    data.append('Kva det gjeld', lead.melding);
+    data.append('Utdrag frå samtalen', lead.transcript || '');
+    try {
+      const res = await fetch(W3F_URL, { method: 'POST', body: data });
+      const json = await res.json();
+      return !!(res.ok && json && json.success);
+    } catch {
+      return false;
     }
   }
 

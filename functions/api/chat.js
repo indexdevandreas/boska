@@ -15,10 +15,6 @@ const ALLOWED_ORIGINS = [
   'https://www.boskaror.no',
 ];
 
-/* Offentleg Web3Forms-nøkkel, same som kontaktskjemaet i main.js.
-   E-posten går til adressa som er registrert på nøkkelen (Tommy). */
-const WEB3FORMS_KEY = '81f9b353-00c0-407b-8bd6-ff39ca14903a';
-
 /* Verktøyet modellen kan kalle. Alle tre felta er påkravde, så modellen
    må ha spurt kunden før det blir sendt noko. */
 const TOOLS = [
@@ -183,10 +179,21 @@ export async function onRequestPost({ request, env, waitUntil }) {
     return json({ error: 'Ugyldig meldingsformat.' }, 400);
   }
 
+  /* Oppfølging etter send_lead: nettlesaren har sendt e-posten (Web3Forms
+     tek berre imot kall frå klientsida) og seier frå om det gjekk. Vi
+     byggjer tool_result sjølve ut frå ok-flagget; teksten frå klienten
+     blir ikkje brukt. */
+  const cont = body.continuation ? sanitizeContinuation(body.continuation) : null;
+  if (body.continuation && !cont) {
+    return json({ error: 'Ugyldig oppfølging.' }, 400);
+  }
+
   /* Første kall mot Anthropic. Feilar det, får klienten vanleg 502-JSON. */
   let upstream;
   try {
-    upstream = await callAnthropic(env, messages, { tools: TOOLS });
+    upstream = cont
+      ? await callAnthropic(env, followUpMessages(messages, cont), { tools: TOOLS, tool_choice: { type: 'none' } })
+      : await callAnthropic(env, messages, { tools: TOOLS });
   } catch (err) {
     console.error('Fekk ikkje kontakt med Anthropic', err && err.message);
     return json({ error: 'Klarte ikkje å hente svar akkurat no.' }, 502);
@@ -198,11 +205,12 @@ export async function onRequestPost({ request, env, waitUntil }) {
   }
 
   /* Straumen blir lesen her og text_delta-hendingane sende vidare til
-     widgeten som SSE. Ber modellen om å køyre send_lead, sender vi
-     beskjeden til Tommy og gjer eitt oppfølgingskall som streamar
-     stadfestinga vidare i same svar. Widgeten ser berre tekst. */
+     widgeten som SSE. Ber modellen om å køyre send_lead med gyldige data,
+     får widgeten ei br_lead-hending og sender e-posten sjølv, før han
+     kjem tilbake med continuation for stadfestinga. Er dataa ugyldige,
+     får modellen feilen med ein gong og spør kunden på nytt. */
   const { readable, writable } = new TransformStream();
-  const run = relay(env, messages, upstream, writable.getWriter());
+  const run = relay(env, messages, upstream, writable.getWriter(), !cont);
   if (waitUntil) waitUntil(run);
 
   return new Response(readable, {
@@ -214,7 +222,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   });
 }
 
-async function relay(env, messages, upstream, writer) {
+async function relay(env, messages, upstream, writer, allowTool) {
   const enc = new TextEncoder();
   const write = (ev) => writer.write(enc.encode('data: ' + JSON.stringify(ev) + '\n\n'));
   const writeText = (text) =>
@@ -223,37 +231,33 @@ async function relay(env, messages, upstream, writer) {
   try {
     const first = await forwardStream(upstream.body, writeText);
 
-    if (first.stopReason === 'tool_use' && first.toolUse) {
-      const result = await runTool(env, first.toolUse, messages);
+    if (allowTool && first.stopReason === 'tool_use' && first.toolUse) {
+      const lead = validateLead(first.toolUse);
+      const toolUse = { id: first.toolUse.id, name: first.toolUse.name, input: first.toolUse.input };
 
-      const followUp = [
-        ...messages,
-        {
-          role: 'assistant',
-          content: [
-            ...(first.text ? [{ type: 'text', text: first.text }] : []),
-            { type: 'tool_use', id: first.toolUse.id, name: first.toolUse.name, input: first.toolUse.input },
-          ],
-        },
-        {
-          role: 'user',
-          content: [
-            { type: 'tool_result', tool_use_id: first.toolUse.id, content: result.text, is_error: !result.ok },
-          ],
-        },
-      ];
+      if (lead.ok) {
+        /* Gyldige data: nettlesaren sender e-posten og kjem tilbake. */
+        await write({
+          type: 'br_lead',
+          text: first.text,
+          tool_use: toolUse,
+          lead: {
+            namn: lead.namn,
+            telefon: lead.telefon,
+            melding: lead.melding,
+            transcript: transcriptOf(messages),
+          },
+        });
+        return;
+      }
 
+      /* Ugyldige data: gje modellen feilen no, så han spør på nytt. */
+      const followUp = followUpMessages(messages, { text: first.text, tool_use: toolUse, ok: false, error: lead.text });
       const second = await callAnthropic(env, followUp, { tools: TOOLS, tool_choice: { type: 'none' } });
       if (!second.ok) {
         const detail = await second.text().catch(() => '');
         console.error('Anthropic-feil (oppfølging)', second.status, detail.slice(0, 500));
-        /* Beskjeden er sendt, men stadfestinga kom ikkje. Sei det sjølv. */
-        await writeText(
-          (first.text && !/\s$/.test(first.text) ? ' ' : '') +
-          (result.ok
-            ? 'Beskjeden er sendt til Tommy. Han tek kontakt så snart han kan.'
-            : 'Det gjekk dessverre ikkje å sende beskjeden no. Ring oss på +47 941 68 653 eller send e-post til tommy@boskaror.no.')
-        );
+        await writeText((first.text && !/\s$/.test(first.text) ? ' ' : '') + 'Eg fekk ikkje sendt beskjeden. Ring oss på +47 941 68 653 eller send e-post til tommy@boskaror.no.');
       } else {
         if (first.text && !/\s$/.test(first.text)) await writeText(' ');
         await forwardStream(second.body, writeText);
@@ -343,10 +347,11 @@ function callAnthropic(env, messages, extra) {
 
 /* ── Verktøy: send beskjed til Tommy ────────────────────────
    Modellen samlar namn, telefon og kva det gjeld, og kallar send_lead.
-   Vi validerer og sender e-post via Web3Forms, same teneste som
-   kontaktskjemaet på sida bruker (nøkkelen er offentleg og ligg alt i
-   main.js). Resultatet går tilbake til modellen som tool_result. */
-async function runTool(env, toolUse, messages) {
+   Vi validerer her. Sjølve e-posten går via Web3Forms frå nettlesaren
+   (same teneste som kontaktskjemaet; gratisplanen avviser kall frå
+   tenar), og widgeten kjem tilbake med continuation så modellen kan
+   stadfeste etter at e-posten faktisk er sendt. */
+function validateLead(toolUse) {
   if (toolUse.name !== 'send_lead') {
     return { ok: false, text: 'Ukjent verktøy.' };
   }
@@ -360,40 +365,61 @@ async function runTool(env, toolUse, messages) {
   if (!telefon) return { ok: false, text: 'Ugyldig telefonnummer («' + telefonRaa.slice(0, 30) + '»). Spør kunden om eit norsk nummer med 8 siffer.' };
   if (melding.length < 3) return { ok: false, text: 'Manglar kva det gjeld. Spør kunden kort om det.' };
 
-  /* Dei siste meldingane i samtalen, så Tommy ser samanhengen. */
-  const transcript = messages
+  return { ok: true, namn, telefon, melding };
+}
+
+/* Dei siste meldingane i samtalen, så Tommy ser samanhengen. */
+function transcriptOf(messages) {
+  return messages
     .slice(-6)
     .map((m) => (m.role === 'user' ? 'Kunde: ' : 'Chatbot: ') + String(m.content).slice(0, 400))
     .join('\n');
+}
 
-  const payload = {
-    access_key: env.WEB3FORMS_KEY || WEB3FORMS_KEY,
-    subject: 'Kunde vil bli ringt opp – frå chatboten på boskaror.no',
-    from_name: 'Chatboten på boskaror.no',
-    Namn: namn,
-    Telefon: telefon,
-    'Kva det gjeld': melding,
-    'Utdrag frå samtalen': transcript,
-    botcheck: '',
-  };
+/* Meldingslista for oppfølgingskallet: historikk, assistentblokka med
+   tekst og tool_use, og tool_result. Innhaldet i tool_result bestemmer vi
+   sjølve ut frå ok-flagget. */
+function followUpMessages(messages, cont) {
+  const resultText = cont.ok
+    ? 'Sendt til Tommy på e-post. Stadfest kort at han har fått beskjeden og tek kontakt, som regel same dag i opningstida.'
+    : (cont.error || 'Klarte ikkje å sende e-posten. Be kunden ringje +47 941 68 653 eller sende e-post til tommy@boskaror.no.');
+  return [
+    ...messages,
+    {
+      role: 'assistant',
+      content: [
+        ...(cont.text ? [{ type: 'text', text: cont.text }] : []),
+        { type: 'tool_use', id: cont.tool_use.id, name: cont.tool_use.name, input: cont.tool_use.input },
+      ],
+    },
+    {
+      role: 'user',
+      content: [
+        { type: 'tool_result', tool_use_id: cont.tool_use.id, content: resultText, is_error: !cont.ok },
+      ],
+    },
+  ];
+}
 
-  try {
-    const res = await fetch(env.WEB3FORMS_URL || 'https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.success) {
-      console.error('Web3Forms-feil', res.status, JSON.stringify(data).slice(0, 300));
-      return { ok: false, text: 'Klarte ikkje å sende e-posten. Be kunden ringje +47 941 68 653 eller sende e-post til tommy@boskaror.no.' };
-    }
-  } catch (err) {
-    console.error('Web3Forms nede', err && err.message);
-    return { ok: false, text: 'Klarte ikkje å sende e-posten. Be kunden ringje +47 941 68 653 eller sende e-post til tommy@boskaror.no.' };
+/* Continuation frå klienten er utrygg. Berre forma blir teken imot; kva
+   modellen får høyre, bestemmer followUpMessages. */
+function sanitizeContinuation(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const tu = raw.tool_use;
+  if (!tu || typeof tu !== 'object') return null;
+  if (typeof tu.id !== 'string' || !/^toolu_[A-Za-z0-9_-]{1,80}$/.test(tu.id)) return null;
+  if (tu.name !== 'send_lead') return null;
+  const input = tu.input && typeof tu.input === 'object' ? tu.input : {};
+  const clean = {};
+  for (const k of ['namn', 'telefon', 'melding']) {
+    if (typeof input[k] !== 'string') return null;
+    clean[k] = input[k].slice(0, 600);
   }
-
-  return { ok: true, text: 'Sendt til Tommy på e-post. Namn: ' + namn + ', telefon: ' + telefon + '.' };
+  return {
+    text: typeof raw.text === 'string' ? raw.text.slice(0, MAX_CHARS) : '',
+    tool_use: { id: tu.id, name: 'send_lead', input: clean },
+    ok: raw.ok === true,
+  };
 }
 
 /* Norsk mobil-/fastnummer: 8 siffer, med eller utan +47/0047. */
