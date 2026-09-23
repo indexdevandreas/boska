@@ -903,11 +903,38 @@ main > .ventilasjon-hero {
   background: #fff; padding: 4rem 0;
 }
 .testimonial-inner { max-width: 760px; margin: 0 auto; text-align: center; }
-/* Luft og ein kort skiljestrek mellom fleire omtalar */
-.testimonial-inner + .testimonial-inner { margin-top: 3.5rem; padding-top: 3.5rem; position: relative; }
-.testimonial-inner + .testimonial-inner::before {
-  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 48px; height: 1px; background: var(--c-line);
+/* Karusell: alle omtalane ligg i same rutenettcelle, så høgda blir
+   den høgaste og ingenting hoppar når ein byter. */
+.t-carousel {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 1.5rem;
+  max-width: 920px; margin: 0 auto;
+}
+.t-track { display: grid; }
+.t-track > .testimonial-inner {
+  grid-area: 1 / 1; opacity: 0; visibility: hidden;
+  transition: opacity .45s ease, visibility 0s linear .45s;
+}
+.t-track > .testimonial-inner.is-active {
+  opacity: 1; visibility: visible;
+  transition: opacity .45s ease, visibility 0s;
+}
+.t-nav {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1.5px solid var(--c-line); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.t-nav svg { width: 20px; height: 20px; fill: none; stroke: var(--c-ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.t-nav:hover { border-color: var(--c-primary); background: var(--c-primary-soft); }
+.t-nav:hover svg { stroke: var(--c-primary); }
+.t-nav:active { transform: scale(.95); }
+.t-nav:focus-visible { outline: 2px solid var(--c-primary); outline-offset: 2px; }
+.t-dots { grid-column: 1 / -1; display: flex; justify-content: center; gap: .5rem; margin-top: .5rem; }
+.t-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--c-line); transition: background .2s, width .2s; }
+.t-dots span.is-active { background: var(--c-primary); width: 20px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .t-track > .testimonial-inner, .t-track > .testimonial-inner.is-active { transition: none; }
 }
 
 .testimonial-mark {
@@ -2410,7 +2437,11 @@ a.hc-item-val:hover { color: var(--c-primary); }
   .team-section, .content-section { padding: 3.5rem 0; }
   .homepage-contact { padding: 3rem 0 4rem; }
   .testimonial-section { padding: 2.5rem 0; }
-  .testimonial-inner + .testimonial-inner { margin-top: 2.5rem; padding-top: 2.5rem; }
+  .t-carousel { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .t-track { grid-column: 1 / -1; grid-row: 1; }
+  .t-prev { grid-row: 2; justify-self: end; }
+  .t-next { grid-row: 2; justify-self: start; }
+  .t-dots { grid-row: 3; }
   .split-stats-section { padding: 3rem 0 0; }
 
   /* Footer bottom mobile */

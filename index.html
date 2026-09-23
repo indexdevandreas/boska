@@ -455,27 +455,38 @@
     </section>
 
     <!-- TESTIMONIAL -->
-    <section class="testimonial-section" aria-label="Kundeuttalelse">
+    <section class="testimonial-section" aria-label="Kundeomtalar">
       <div class="container">
-        <div class="testimonial-inner reveal scale-up">
-          <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="testimonial-quote">
-            "Veldig fornøgde med installasjon av balansert ventilasjonsanlegg, samt god service og oppfølging. Ein veldig godt utført jobb av Tommy Boska. Anbefalast!"
-          </blockquote>
-          <div class="testimonial-meta">
-            <span class="testimonial-name">Ingvild Klokk</span>
-            <span class="testimonial-source">Google-omtale · 5 stjerner</span>
+        <div class="t-carousel reveal scale-up" role="region" aria-roledescription="karusell" aria-label="Kundeomtalar">
+          <button type="button" class="t-nav t-prev" aria-label="Førre omtale">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="t-track">
+            <div class="testimonial-inner is-active" role="group" aria-roledescription="omtale" aria-label="1 av 2">
+              <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
+              <blockquote class="testimonial-quote">
+                "Veldig fornøgde med installasjon av balansert ventilasjonsanlegg, samt god service og oppfølging. Ein veldig godt utført jobb av Tommy Boska. Anbefalast!"
+              </blockquote>
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Ingvild Klokk</span>
+                <span class="testimonial-source">Google-omtale · 5 stjerner</span>
+              </div>
+            </div>
+            <div class="testimonial-inner" role="group" aria-roledescription="omtale" aria-label="2 av 2" aria-hidden="true">
+              <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
+              <blockquote class="testimonial-quote">
+                "Er veldig fornøyd med detaljene og kvaliteten som legges i arbeidet."
+              </blockquote>
+              <div class="testimonial-meta">
+                <span class="testimonial-name">Edvard Leira</span>
+                <span class="testimonial-source">Google-omtale · 5 stjerner</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="testimonial-inner reveal scale-up" style="--delay:.12s">
-          <span class="testimonial-mark" aria-hidden="true">&ldquo;</span>
-          <blockquote class="testimonial-quote">
-            "Er veldig fornøyd med detaljene og kvaliteten som legges i arbeidet."
-          </blockquote>
-          <div class="testimonial-meta">
-            <span class="testimonial-name">Edvard Leira</span>
-            <span class="testimonial-source">Google-omtale · 5 stjerner</span>
-          </div>
+          <button type="button" class="t-nav t-next" aria-label="Neste omtale">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div class="t-dots" aria-hidden="true"></div>
         </div>
       </div>
     </section>

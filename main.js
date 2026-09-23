@@ -192,3 +192,45 @@ function handleForm(formId, successSel) {
 
 handleForm('contact-form', '.form-success');
 handleForm('homepage-contact-form', '.hc-success');
+
+// === OMTALAR: karusell med pil venstre/høgre, går i loop ===
+(() => {
+  const root = document.querySelector('.t-carousel');
+  if (!root) return;
+  const slides = [...root.querySelectorAll('.t-track > .testimonial-inner')];
+  const dotsEl = root.querySelector('.t-dots');
+  if (slides.length < 2) { root.querySelectorAll('.t-nav, .t-dots').forEach(el => el.remove()); return; }
+
+  const dots = slides.map(() => dotsEl.appendChild(document.createElement('span')));
+  let i = 0;
+
+  const show = (n) => {
+    i = (n + slides.length) % slides.length;
+    slides.forEach((s, k) => {
+      const on = k === i;
+      s.classList.toggle('is-active', on);
+      s.setAttribute('aria-hidden', on ? 'false' : 'true');
+    });
+    dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
+  };
+
+  root.querySelector('.t-prev').addEventListener('click', () => show(i - 1));
+  root.querySelector('.t-next').addEventListener('click', () => show(i + 1));
+
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(i - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); show(i + 1); }
+  });
+
+  // Sveip på mobil
+  let x0 = null;
+  root.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) show(dx < 0 ? i + 1 : i - 1);
+    x0 = null;
+  }, { passive: true });
+
+  show(0);
+})();
