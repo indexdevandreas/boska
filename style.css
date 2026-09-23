@@ -2445,3 +2445,16 @@ a.hc-item-val:hover { color: var(--c-primary); }
   .hc-submit { font-size: .85rem; padding: .9rem 1rem; }
   .hc-trust { flex-direction: column; gap: .75rem; }
 }
+
+/* === PERSONVERN (legal-underside) === */
+.legal-body { max-width: 760px; }
+.legal-body h2 {
+  font-size: 1.25rem; letter-spacing: -.02em;
+  margin: 2.25rem 0 .75rem;
+}
+.legal-body h2:first-child { margin-top: 0; }
+.legal-body p {
+  font-size: .95rem; color: var(--c-muted); line-height: 1.8;
+  margin-bottom: .875rem;
+}
+.legal-body p a { color: var(--c-primary); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }

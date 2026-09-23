@@ -1,0 +1,5 @@
+# wrangler pages dev lagar lokal tilstand her
+.wrangler/
+# lokale hemmelegheiter for wrangler (API-nøkkel skal aldri i repoet)
+.dev.vars
+node_modules/

@@ -39,7 +39,7 @@
     "email": "tommy@boskaror.no",
     "url": "https://boskaror.no",
     "employee": { "@type": "Person", "name": "Tommy Boska" },
-    "priceRange": "1990–3990 kr"
+    "priceRange": "990–3990 kr"
   }
   </script>
 
@@ -48,6 +48,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"></noscript>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/chatbot-widget.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/chatbot-widget.css"></noscript>
   <script>if(sessionStorage.getItem('boska_seen'))document.documentElement.dataset.splashSeen=''</script>
   <style>[data-splash-seen] #splash{display:none!important}</style>
 </head>
@@ -390,63 +392,56 @@
       <div class="container">
         <div class="pricing-header reveal">
           <span class="section-label">Prisar</span>
-          <h2 class="section-title">Service og kanalrens.</h2>
-          <p class="section-sub">Transparente prisar utan skjulte kostnader. Pris på filter kjem i tillegg. Eventuelle ferjeutgifter og tillegg ved reiseveg over 30 min kjem i tillegg (490,–&nbsp;inkl.&nbsp;mva).</p>
+          <h2 class="section-title">Kanalrens og filteravtale.</h2>
+          <p class="section-sub">Transparente prisar utan skjulte kostnader. Eventuelle ferjeutgifter og tillegg ved reiseveg over 30 min kjem i tillegg (490,–&nbsp;inkl.&nbsp;mva). Fleire prisar kjem.</p>
         </div>
         <div class="pricing-grid pricing-grid--three">
 
-          <div class="pricing-card reveal" style="--delay:.05s">
-            <div class="pricing-card-top">
-              <span class="pricing-tier">Standard service</span>
-              <div class="pricing-price">1&nbsp;990<span class="pricing-comma">,–</span></div>
-              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; pris på filter kjem i tillegg</p>
-            </div>
-            <p class="pricing-incl">Dette er inkludert:</p>
-            <ul class="pricing-list">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kontroll av aggregat</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Reingjering av aggregat</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Reingjering av ventilar</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kontroll av luftmengder</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Filterbyte</li>
-            </ul>
-            <a href="#kontakt" class="pricing-cta">Book standard service →</a>
-          </div>
-
-          <div class="pricing-card featured reveal" style="--delay:.1s">
+          <div class="pricing-card featured reveal" style="--delay:.05s">
             <div class="pricing-badge">Mest populær</div>
             <div class="pricing-card-top">
-              <span class="pricing-tier">Komplett service</span>
+              <span class="pricing-tier">Kanalrens med innregulering</span>
               <div class="pricing-price">3&nbsp;990<span class="pricing-comma">,–</span></div>
-              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; pris på filter kjem i tillegg</p>
-            </div>
-            <p class="pricing-incl">Dette er inkludert:</p>
-            <ul class="pricing-list">
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kontroll av aggregat</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Reingjering av aggregat</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Reingjering av ventilar</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kontroll av luftmengder</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Filterbyte</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kanalrens</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Innregulering av luftmengder</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Før- og etterbilde av kanalrens</li>
-            </ul>
-            <a href="#kontakt" class="pricing-cta pricing-cta--white">Book komplett service →</a>
-          </div>
-
-          <div class="pricing-card reveal" style="--delay:.15s">
-            <div class="pricing-card-top">
-              <span class="pricing-tier">Kanalrens</span>
-              <div class="pricing-price">1&nbsp;990<span class="pricing-comma">,–</span></div>
-              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; ekskl. service av aggregat</p>
+              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; per bustad</p>
             </div>
             <p class="pricing-incl">Dette er inkludert:</p>
             <ul class="pricing-list">
               <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Rens av ventilasjonskanalar</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Dokumentasjon med bilete</li>
-              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Kontroll av luftstrøym</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Innregulering av luftmengder</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Før- og etterbilete av kanalrens</li>
+            </ul>
+            <a href="#kontakt" class="pricing-cta pricing-cta--white">Book kanalrens →</a>
+          </div>
+
+          <div class="pricing-card reveal" style="--delay:.1s">
+            <div class="pricing-card-top">
+              <span class="pricing-tier">Burettslag og sameige</span>
+              <div class="pricing-price">3&nbsp;490<span class="pricing-comma">,–</span></div>
+              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; per bustad når fleire bestiller saman</p>
+            </div>
+            <p class="pricing-incl">Kanalrens med innregulering:</p>
+            <ul class="pricing-list">
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Rens av ventilasjonskanalar</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Innregulering av luftmengder</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Før- og etterbilete av kanalrens</li>
+            </ul>
+            <a href="#kontakt" class="pricing-cta">Be om tilbod →</a>
+          </div>
+
+          <div class="pricing-card reveal" style="--delay:.15s">
+            <div class="pricing-card-top">
+              <span class="pricing-tier">Filteravtale</span>
+              <div class="pricing-price">990<span class="pricing-comma">,–</span></div>
+              <p class="pricing-period">inkl. mva &nbsp;·&nbsp; pris på filter kjem i tillegg</p>
+            </div>
+            <p class="pricing-incl">Dette er inkludert:</p>
+            <ul class="pricing-list">
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Påminning når det er tid for filterbyte</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Filterbyte</li>
+              <li><svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,9 6,13 14,4"/></svg>Enkel funksjonskontroll av aggregat</li>
             </ul>
             <div class="pricing-note">Gratis og uforpliktande befaring – ta kontakt for ein hyggeleg prat!</div>
-            <a href="#kontakt" class="pricing-cta">Book kanalrens →</a>
+            <a href="#kontakt" class="pricing-cta">Bli filterkunde →</a>
           </div>
 
         </div>
@@ -646,6 +641,7 @@
             <a href="#om">Om oss</a>
             <a href="#prisar">Prisar</a>
             <a href="#kontakt">Kontakt</a>
+            <a href="/personvern">Personvern</a>
           </nav>
           <div class="footer-col footer-col--info">
             <h4>Opningstider</h4>
@@ -680,5 +676,6 @@
   </a>
 
   <script src="/main.js" defer></script>
+  <script src="/chatbot-widget.js" defer></script>
 </body>
 </html>

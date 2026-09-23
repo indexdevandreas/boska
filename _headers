@@ -1,0 +1,13 @@
+# Cloudflare Pages les denne fila. Gjeld statiske filer, ikkje Functions
+# (/api/chat set sine eigne headers i functions/api/chat.js).
+
+# Chat-widgeten: alltid sjekk mot tenaren (ETag → 304 når uendra), så ein
+# ny versjon slår inn med ein gong i staden for å ligge fire timar i cache.
+/chatbot-widget.css
+  Cache-Control: public, max-age=0, must-revalidate
+/chatbot-widget.js
+  Cache-Control: public, max-age=0, must-revalidate
+/style.css
+  Cache-Control: public, max-age=0, must-revalidate
+/main.js
+  Cache-Control: public, max-age=0, must-revalidate

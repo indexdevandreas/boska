@@ -1,0 +1,446 @@
+/* ── Chat-widget for Boska Rør og Ventilasjon ────────────────
+   Alt har prefikset br- så ingenting kolliderer med style.css.
+   Fargane er sidas eigne variablar (med fallback til same verdiar)
+   så widgeten følgjer sida om paletten blir endra. Boble, header og
+   send-knapp går i primærblå. Radius ligg på 10–14px, litt strammare
+   enn resten av sida, ingen gradientar eller glas-effektar.
+   Stilarket blir lasta med media="print" og bytt til all ved onload;
+   widgeten ventar på det før han legg seg inn i DOM-en. */
+
+/* ── Boble ─────────────────────────────────────────────────── */
+#br-bubble {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--c-primary, #1f5fbf);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(31, 95, 191, .35);
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+#br-bubble:hover {
+  background: var(--c-primary-deep, #0e3d80);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(31, 95, 191, .45);
+}
+#br-bubble:focus-visible,
+#br-close:focus-visible,
+#br-send:focus-visible,
+.br-btn:focus-visible {
+  outline: 2px solid var(--c-primary, #1f5fbf);
+  outline-offset: 2px;
+}
+#br-bubble .br-icon-chat,
+#br-bubble .br-icon-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .25s ease, opacity .2s ease;
+}
+#br-bubble .br-icon-chat svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+#br-bubble .br-icon-close {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  opacity: 0;
+  transform: rotate(-90deg) scale(.7);
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+#br-bubble.br-open .br-icon-chat {
+  opacity: 0;
+  transform: rotate(90deg) scale(.7);
+}
+#br-bubble.br-open .br-icon-close {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+/* Ulesen-prikk: same grøne som statusprikken i headeren */
+#br-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 13px;
+  height: 13px;
+  background: #2fbf71;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transition: opacity .2s ease;
+}
+#br-badge.br-hidden { opacity: 0; pointer-events: none; }
+
+/* ── Vindauge ──────────────────────────────────────────────── */
+#br-window {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  z-index: 8999;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  max-height: min(600px, calc(100vh - 116px));
+  background: var(--c-surface, #fff);
+  color: var(--c-ink, #0b1220);
+  border: 1px solid var(--c-line, #e7ebf2);
+  border-radius: var(--radius-md, 14px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font, "Plus Jakarta Sans", system-ui, -apple-system, sans-serif);
+  box-shadow: 0 16px 48px rgba(11, 18, 32, .14);
+
+  /* gøymd tilstand */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .24s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .24s;
+  transform-origin: bottom right;
+}
+#br-window.br-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity .2s ease, transform .24s cubic-bezier(.22, 1, .36, 1), visibility 0s;
+}
+
+/* ── Header (primærblå, kvit logo) ─────────────────────────── */
+#br-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--c-primary, #1f5fbf);
+  color: #fff;
+  flex-shrink: 0;
+}
+.br-mark {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.br-mark svg {
+  width: 34px;
+  height: 34px;
+  display: block;
+}
+.br-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.br-header-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.br-header-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .85);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.br-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2fbf71;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .25);
+  flex-shrink: 0;
+}
+#br-close {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .35);
+  border-radius: var(--radius-sm, 10px);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, border-color .15s ease;
+}
+#br-close:hover { background: rgba(255, 255, 255, .15); border-color: rgba(255, 255, 255, .6); }
+#br-close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+/* ── Meldingar ─────────────────────────────────────────────── */
+#br-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px 10px;
+  background: var(--c-tint, #f5f7fb);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(11, 18, 32, .16) transparent;
+  overscroll-behavior: contain;
+}
+#br-messages::-webkit-scrollbar { width: 4px; }
+#br-messages::-webkit-scrollbar-track { background: transparent; }
+#br-messages::-webkit-scrollbar-thumb { background: rgba(11, 18, 32, .16); border-radius: 4px; }
+
+.br-msg {
+  display: flex;
+  flex-direction: column;
+  animation: brMsgIn .2s ease forwards;
+}
+@keyframes brMsgIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.br-bubble-msg {
+  max-width: 88%;
+  padding: 10px 13px;
+  border-radius: 12px;
+  border-bottom-left-radius: 4px;
+  background: var(--c-surface, #fff);
+  border: 1px solid var(--c-line, #e7ebf2);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--c-ink, #0b1220);
+  overflow-wrap: anywhere;
+}
+.br-bubble-msg a {
+  color: var(--c-primary, #1f5fbf);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+}
+.br-bubble-msg a:hover { color: var(--c-primary-deep, #0e3d80); }
+
+/* Brukarmeldingar: høgrestilte, lys tone av primærfargen */
+.br-msg.br-user { align-items: flex-end; }
+.br-msg.br-user .br-bubble-msg {
+  background: var(--c-primary-soft, #e8f0fc);
+  border-color: rgba(31, 95, 191, .22);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 4px;
+}
+
+/* Skriveindikator: tre pulserande prikkar */
+.br-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+}
+.br-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-muted, #5d6b80);
+  animation: brDot 1.1s infinite ease-in-out;
+}
+.br-dot:nth-child(2) { animation-delay: .15s; }
+.br-dot:nth-child(3) { animation-delay: .3s; }
+@keyframes brDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ── Startknappar ──────────────────────────────────────────── */
+#br-buttons {
+  padding: 4px 14px 14px;
+  background: var(--c-tint, #f5f7fb);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+}
+#br-buttons:empty { display: none; }
+.br-btn {
+  padding: 9px 14px;
+  border-radius: var(--radius-sm, 10px);
+  border: 1.5px solid var(--c-line, #e7ebf2);
+  background: var(--c-surface, #fff);
+  color: var(--c-ink, #0b1220);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.br-btn:hover {
+  background: var(--c-primary-soft, #e8f0fc);
+  border-color: var(--c-primary, #1f5fbf);
+  color: var(--c-primary-deep, #0e3d80);
+}
+.br-btn:active { transform: scale(.98); }
+
+/* ── Inputrad ──────────────────────────────────────────────── */
+#br-inputrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--c-line, #e7ebf2);
+  background: var(--c-surface, #fff);
+  flex-shrink: 0;
+}
+#br-input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm, 10px);
+  border: 1.5px solid var(--c-line, #e7ebf2);
+  background: var(--c-tint, #f5f7fb);
+  color: var(--c-ink, #0b1220);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+#br-input::placeholder { color: var(--c-muted, #5d6b80); }
+#br-input:focus {
+  background: var(--c-surface, #fff);
+  border-color: var(--c-primary, #1f5fbf);
+  box-shadow: 0 0 0 3px rgba(31, 95, 191, .18);
+}
+#br-input:disabled { opacity: .55; }
+#br-send {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: var(--radius-sm, 10px);
+  border: none;
+  background: var(--c-primary, #1f5fbf);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, transform .12s ease, opacity .15s ease;
+}
+#br-send:hover { background: var(--c-primary-deep, #0e3d80); }
+#br-send:active { transform: scale(.96); }
+#br-send:disabled { opacity: .55; cursor: default; transform: none; }
+#br-send svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Personvern-line under inputfeltet ─────────────────────── */
+#br-footnote {
+  padding: 0 14px 10px;
+  background: var(--c-surface, #fff);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--c-muted, #5d6b80);
+  text-align: center;
+  flex-shrink: 0;
+}
+#br-footnote a {
+  color: var(--c-muted, #5d6b80);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+#br-footnote a:hover { color: var(--c-primary, #1f5fbf); }
+
+/* ── Redusert rørsle ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #br-window, #br-bubble, .br-msg, .br-dot,
+  #br-bubble .br-icon-chat, #br-bubble .br-icon-close {
+    transition: none;
+    animation: none;
+  }
+  .br-dot { opacity: .7; }
+}
+
+/* ── Nettbrett og mobil ────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* «Ring no»-knappen (.floating-call) ligg nede til høgre på ≤768px.
+     Bobla legg seg rett over han i staden for oppå. */
+  #br-bubble {
+    right: 20px;
+    bottom: 82px;
+  }
+  #br-window {
+    right: 20px;
+    bottom: 150px;
+    max-height: min(600px, calc(100vh - 170px));
+  }
+}
+
+@media (max-width: 480px) {
+  /* Heile skjermen. Lukking skjer med knappen i headeren; bobla og
+     «Ring no» blir gøymde medan vindauget er ope. */
+  #br-window {
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    transform-origin: center bottom;
+  }
+  html.br-open #br-bubble,
+  html.br-open .floating-call {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* 16px er iOS-grensa: mindre skrift får Safari til å zoome inn heile
+     sida når feltet får fokus. */
+  #br-input { font-size: 16px; }
+  #br-close { width: 44px; height: 44px; }
+  #br-header { padding-top: calc(14px + env(safe-area-inset-top)); }
+  #br-inputrow { padding-bottom: 10px; }
+  #br-footnote { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+  /* Bakgrunnen skal ikkje rulle bak eit fullskjermsvindauge */
+  html.br-open, html.br-open body { overflow: hidden; }
+  /* Nav-en (.nav-header, z-index 100) og mobilmenyen blir gøymde medan
+     chatten er open, så ingenting ligg oppå eller bak headeren. */
+  html.br-open .nav-header,
+  html.br-open .mobile-nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
