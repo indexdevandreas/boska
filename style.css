@@ -1898,7 +1898,7 @@ a.hc-item-val:hover { color: var(--c-primary); }
 .pricing-grid--three { grid-template-columns: repeat(3, 1fr); }
 .pricing-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem; margin-top: 3rem; align-items: start;
+  gap: 1.25rem; margin-top: 3rem; align-items: stretch;
 }
 .pricing-card {
   padding: 2.5rem 2.25rem;
@@ -1915,11 +1915,11 @@ a.hc-item-val:hover { color: var(--c-primary); }
   transform: translateY(-12px);
 }
 .pricing-badge {
+  position: absolute; top: 0; left: 2.25rem; transform: translateY(-50%);
   display: inline-block; align-self: flex-start;
   font-size: .58rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   background: var(--c-primary); color: #fff;
   padding: .3rem .75rem; border-radius: 100px;
-  margin-bottom: 1.25rem;
 }
 .pricing-card-top { margin-bottom: .25rem; }
 .pricing-tier {
@@ -1957,6 +1957,11 @@ a.hc-item-val:hover { color: var(--c-primary); }
   padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.08);
   line-height: 1.6;
 }
+.pricing-footnote {
+  margin-top: 2rem; text-align: center;
+  font-size: .85rem; color: rgba(255,255,255,.45);
+}
+.pricing-footnote a { color: #fff; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .pricing-comma { font-size: 2rem; font-weight: 800; }
 .pricing-cta {
   display: block; text-align: center; margin-top: 2rem;
