@@ -164,13 +164,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   if (!env.ANTHROPIC_API_KEY) {
     console.error('ANTHROPIC_API_KEY manglar i miljøvariablane.');
-    /* MIDLERTIDIG DIAGNOSE: berre namn, aldri verdiar. Fjernast når nøkkelen virkar. */
-    return json({
-      error: 'Tenesta er ikkje sett opp.',
-      diag: 'v2',
-      branch: env.CF_PAGES_BRANCH || null,
-      names: Object.keys(env).filter((k) => !/^CF_PAGES|^ASSETS$/.test(k)),
-    }, 500);
+    return json({ error: 'Tenesta er ikkje sett opp.' }, 500);
   }
 
   let body;
