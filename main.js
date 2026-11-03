@@ -1,22 +1,5 @@
 /* BOSKA RØR OG VENTILASJON */
 
-// === SPLASH (index only) ===
-(() => {
-  const splash = document.getElementById('splash');
-  if (!splash) return;
-
-  // Measure each path so stroke-dasharray animation knows its length
-  splash.querySelectorAll('.logo-svg path').forEach(p => {
-    p.style.setProperty('--len', p.getTotalLength());
-  });
-
-  if (sessionStorage.getItem('boska_seen')) {
-    splash.classList.add('skip');
-  } else {
-    sessionStorage.setItem('boska_seen', '1');
-  }
-})();
-
 // === SCROLL REVEAL ===
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
