@@ -1095,7 +1095,7 @@ main > .ventilasjon-hero {
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
-.footer-col h4 {
+.footer-col h4, .footer-col h3 {
   font-size: .58rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
   color: var(--c-muted); margin-bottom: 1.125rem;
 }
