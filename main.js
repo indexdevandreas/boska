@@ -19,17 +19,18 @@ setTimeout(() => {
 // === STICKY HERO FADE (desktop only) ===
 (() => {
   const hero = document.querySelector('.hero');
-  if (!hero || window.innerWidth < 1024) return;
+  const desktop = window.matchMedia('(min-width: 1024px)');
+  if (!hero || !desktop.matches) return;
   window.addEventListener('scroll', () => {
-    if (window.innerWidth < 1024) return;
+    if (!desktop.matches) return;
     const h = hero.offsetHeight;
     const progress = Math.min(Math.max(window.scrollY / (h * 0.65), 0), 1);
     hero.style.opacity = 1 - progress * 0.55;
   }, { passive: true });
 })();
 
-// === HERO CANVAS PARTICLES ===
-(() => {
+// === HERO CANVAS PARTICLES (startar etter at sida er lasta) ===
+const heroParticles = () => {
   const hero = document.querySelector('.hero');
   if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -72,7 +73,9 @@ setTimeout(() => {
   }, { threshold: 0 });
   obs.observe(hero);
   tick();
-})();
+};
+if (document.readyState === 'complete') setTimeout(heroParticles, 0);
+else window.addEventListener('load', () => setTimeout(heroParticles, 0), { once: true });
 
 // === STICKY NAV ===
 const nav = document.querySelector('.nav-header');
