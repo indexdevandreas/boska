@@ -1,17 +1,27 @@
 # Boska Rør og Ventilasjon
 
-Boska Rør og Ventilasjon er ein lokal handverksverksemd i Ørsta, Møre og Romsdal, driven av Tommy Boska. Selskapet tilbyr profesjonelle rørleggar- og ventilasjonstenester til private husstandar og næringsbygg på Sunnmøre.
+> Rørleggar og ventilasjon i Ørsta, Møre og Romsdal. Driven av Tommy Boska. Kanalrens med innregulering, filteravtale, service på balansert ventilasjon og rørleggararbeid for heim og bedrift i Ørsta og omegn på Sunnmøre. Gratis og uforpliktande befaring.
 
 ## Tenester
 
-- [Ventilasjon](https://boskaror.no/#tenester) – installasjon, service, filterbytte og kanalrens av balanserte ventilasjonsanlegg
-- [Rørlegging](https://boskaror.no/#tenester) – fagmessig rørleggararbeid for heim og bedrift
-- [Filteravtale](https://boskaror.no/#prisar) – fast filterservice-avtale for jamleg vedlikehald
-- [Prisar](https://boskaror.no/#prisar) – kanalrens med innregulering 3 990,–, burettslag og sameige 3 490,– per bustad når fleire bestiller saman, filteravtale 990,–
-- [Personvern](https://boskaror.no/personvern)
+- [Ventilasjon](https://boskaror.no/#tenester): installasjon, service, filterbyte og kanalrens av balanserte ventilasjonsanlegg
+- [Rørlegging](https://boskaror.no/#tenester): fagmessig rørleggararbeid for heim og bedrift
+- [Filteravtale](https://boskaror.no/#prisar): fast filterservice for jamleg vedlikehald
+
+## Prisar (inkl. mva.)
+
+- Kanalrens med innregulering: 3 990 kr per bustad
+- Burettslag og sameige: 3 490 kr per bustad når fleire bestiller saman
+- Filteravtale: 990 kr, pris på filter kjem i tillegg
+- Ferjeutgifter og reiseveg over 30 minutt: 490 kr i tillegg
+- Fleire prisar kjem. Ta kontakt for andre oppdrag.
 
 ## Kontakt
 
-- Telefon: +47 941 68 653
+- Telefon: +47 941 68 653 (måndag–fredag 07:00–16:00)
+- E-post: tommy@boskaror.no
 - Stad: Ørsta, Møre og Romsdal
+- Org.nr.: 934 122 615
 - [Kontaktskjema](https://boskaror.no/#kontakt)
+- [Bestill befaring (agent-skill)](https://boskaror.no/.well-known/agent-skills/bestill-befaring/SKILL.md)
+- [Personvern](https://boskaror.no/personvern)

@@ -1,0 +1,26 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Boska Rør og Ventilasjon",
+    "documentationUrl": "https://boskaror.no/llms.txt",
+    "logoUrl": "https://boskaror.no/bilder/logo.png"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:boskaror.no:tenester:bestill-befaring",
+      "displayName": "Bestill befaring hos Boska Rør og Ventilasjon",
+      "type": "text/markdown; profile=\"urn:air:agent-skills\"",
+      "url": "https://boskaror.no/.well-known/agent-skills/bestill-befaring/SKILL.md",
+      "description": "Korleis ein bestiller gratis befaring, kanalrens, filteravtale eller rørleggararbeid i Ørsta, med prisar og kontaktinformasjon.",
+      "tags": ["rørleggar", "ventilasjon", "kanalrens", "filteravtale", "Ørsta", "Sunnmøre"],
+      "representativeQueries": [
+        "rørleggar i Ørsta",
+        "kanalrens Ørsta pris",
+        "bestill befaring ventilasjon Sunnmøre",
+        "filteravtale ventilasjonsanlegg Ørsta"
+      ],
+      "version": "1.0.0",
+      "updatedAt": "2026-11-03T00:00:00Z"
+    }
+  ]
+}

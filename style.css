@@ -58,6 +58,13 @@ h1,h2,h3,h4 {
 }
 .reveal.in { opacity: 1; transform: none; }
 
+/* Heroen kjem inn med CSS i staden for å vente på main.js (same rørsle, men
+   tittelen blir teikna med ein gong, så LCP ikkje ventar på JavaScript). */
+.hero .reveal { animation: heroReveal .9s cubic-bezier(.22,1,.36,1) calc(var(--delay) + 60ms) both; }
+.hero .hero-tagline.reveal { animation-delay: calc(var(--delay) + 150ms); }
+.hero .hero-cta-actions.reveal { animation-delay: calc(var(--delay) + 240ms); }
+@keyframes heroReveal { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+
 .reveal.from-left  { transform: translateX(-48px); }
 .reveal.from-right { transform: translateX(48px); }
 .reveal.scale-up   { transform: scale(0.93) translateY(18px); }
